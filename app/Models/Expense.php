@@ -14,6 +14,7 @@ class Expense extends Model
 
     protected $casts = [
         'transaction_date' => 'datetime',
+        'tags' => 'array'
     ];
 
     public function user(): BelongsTo
