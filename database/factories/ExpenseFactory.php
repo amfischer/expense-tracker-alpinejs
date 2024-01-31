@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,8 +27,8 @@ class ExpenseFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'category_id' => Category::factory(),
             'payee' => $this->faker->randomElement($this->payees),
-            'category' => 'test',
             'tags' => json_encode(['business expense', 'vacation']),
             'amount' => $this->faker->randomFloat(2, 1.07, 1000),
             'fees' => $this->faker->randomFloat(2, 1.07, 100),

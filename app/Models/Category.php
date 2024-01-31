@@ -5,23 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Expense extends Model
+class Category extends Model
 {
     use HasFactory;
-
-    protected $guarded = [];
-
-    protected $casts = [
-        'transaction_date' => 'datetime',
-    ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function category()
+    public function expenses()
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(Expense::class);
     }
 }

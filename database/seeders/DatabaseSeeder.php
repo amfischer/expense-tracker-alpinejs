@@ -6,8 +6,11 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Expense;
+use App\Models\Category;
+use Illuminate\Support\Arr;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Database\Factories\CategoryFactory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,8 +29,22 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        Expense::factory(10)->create([
-            'user_id' => $user->id
-        ]);
+        $categoryIds = [];
+
+        foreach (CategoryFactory::$categories as $category) {
+            $data = [
+                'user_id' => $user->id,
+                'name' => $category
+            ];
+
+            $categoryIds[] = Category::factory()->create($data)->id;
+        }
+
+        for ($i=0; $i < 10; $i++) { 
+            Expense::factory()->create([
+                'user_id' => $user->id,
+                'category_id' => Arr::random($categoryIds)
+            ]);
+        }
     }
 }

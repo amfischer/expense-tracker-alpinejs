@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use App\Models\Category;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -13,17 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('expenses', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Category::class);
-            $table->string('payee');
-            $table->text('tags');
-            $table->float('amount', 8, 2);
-            $table->float('fees', 8, 2);
-            $table->date('transaction_date');
-            $table->string('currency');
-            $table->string('notes')->nullable();
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }
@@ -33,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('categories');
     }
 };
