@@ -15,9 +15,9 @@
                     {{-- <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">A list of all expenses in your account including amount, date, and payee.</p> --}}
                   {{-- </div> --}}
                   <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <x-primary-button>
+                        <x-secondary-button>
                             {{ __('Add expense') }}
-                        </x-primary-button>
+                        </x-secondary-button>
                   </div>
                 </div>
 
@@ -50,9 +50,6 @@
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->category->name}}</td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->tags}}</td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->amount}}</td>
-
-                                            {{-- install https://github.com/moneyphp/money for money management--}}
-
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->transaction_date->format('Y-m-d')}}</td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->notes}}</td>
 
@@ -68,7 +65,6 @@
                                             {{-- <a href="#" class="text-white hover:text-gray-400">Edit<span class="sr-only">, Lindsay Walton</span></a> --}}
                                         {{-- </td> --}}
                         
-                                    <!-- More people... -->
                                 </tbody>
 
                             </table>

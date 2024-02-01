@@ -17,10 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->string('payee');
             $table->text('tags');
-            $table->float('amount', 8, 2);
-            $table->float('fees', 8, 2);
+            $table->bigInteger('amount');
+            $table->bigInteger('fees');
             $table->date('transaction_date');
-            $table->string('currency');
+            $table->string('currency', 3);
             $table->string('notes')->nullable();
             $table->timestamps();
 

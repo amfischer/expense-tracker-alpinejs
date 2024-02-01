@@ -2,9 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Money\Money;
+use Money\Currency;
+use Money\Currencies\ISOCurrencies;
 use Illuminate\Database\Eloquent\Model;
+use Money\Formatter\IntlMoneyFormatter;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Expense extends Model
 {
@@ -17,6 +22,13 @@ class Expense extends Model
         'tags' => 'array'
     ];
 
+    protected $intlMoneyFormatter;
+
+    public function __construct()
+    {
+        $this->intlMoneyFormatter = app(IntlMoneyFormatter::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -25,5 +37,16 @@ class Expense extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    protected function amount(): Attribute
+    {
+        return Attribute::make(
+            get: function (int $value, array $attributes) {
+                $money = new Money($value, new Currency($attributes['currency']));
+                return $this->intlMoneyFormatter->format($money);
+                
+            } 
+        );
     }
 }
