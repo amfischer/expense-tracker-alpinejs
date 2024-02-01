@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('category_id');
             $table->string('payee');
-            $table->text('tags');
             $table->bigInteger('amount');
             $table->bigInteger('fees');
             $table->date('transaction_date');

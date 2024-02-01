@@ -29,7 +29,6 @@ class ExpenseFactory extends Factory
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
             'payee' => $this->faker->randomElement($this->payees),
-            'tags' => ['business expense', 'vacation'],
             'amount' => $this->faker->numberBetween(100, 100000), // between $1 USD - $1,000 USD
             'fees' => $this->faker->numberBetween(10, 10000),
             'transaction_date' => $this->faker->dateTimeBetween('-1 year'),

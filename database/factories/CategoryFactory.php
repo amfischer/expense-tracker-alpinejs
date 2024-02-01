@@ -27,15 +27,6 @@ class CategoryFactory extends Factory
         'Travel',
     ];
     
-    public static $tags = [
-        'Subscriptions',
-        'Business Expense',
-        'Groceries',
-        'Restaurants',
-        'Gifts',
-
-    ];
-
     /**
      * Define the model's default state.
      *

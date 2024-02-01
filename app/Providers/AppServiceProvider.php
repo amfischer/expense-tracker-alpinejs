@@ -35,9 +35,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::shouldBeStrict();
 
-        $this->app->resolving(ISOCurrencies::class, function (ISOCurrencies $c, Application $app) {
+        $this->app->resolving(IntlMoneyFormatter::class, function (IntlMoneyFormatter $c, Application $app) {
             // Called when container resolves objects of type "Transistor"...
-            ray('resolving ISOCurrencies', $c);
+            // ray('resolving ISOCurrencies', $c);
         });
     }
 }

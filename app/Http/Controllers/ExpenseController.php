@@ -12,10 +12,14 @@ class ExpenseController extends Controller
     public function index(Request $request): View
     {
         $expenses = $request->user()->expenses;
-        $expenses->load('category');
+        $expenses->load(['category', 'tags']);
 
-        foreach ($expenses as $key => $value) {
-            $value->tags = implode(', ', $value->tags);
+        foreach ($expenses as $e) {
+            $tags = [];
+            foreach ($e->tags()->get() as $tag) {
+                $tags[] = $tag->name;
+            }
+            $e->tagsPretty = implode(', ', $tags);
         }
 
         return view('expense.index', compact('expenses'));
@@ -38,7 +42,7 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
-        ray($request->all());
+        // ray($request->all());
         return back();
     }
 }
