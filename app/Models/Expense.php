@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Money\Money;
 use Money\Currency;
-use Money\Currencies\ISOCurrencies;
 use Illuminate\Database\Eloquent\Model;
 use Money\Formatter\IntlMoneyFormatter;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -20,6 +19,11 @@ class Expense extends Model
     protected $casts = [
         'transaction_date' => 'datetime',
         'tags' => 'array'
+    ];
+
+    public static $allowedCurrencies = [
+        840 => 'USD',
+        604 => 'PEN',
     ];
 
     protected $intlMoneyFormatter;
@@ -49,4 +53,5 @@ class Expense extends Model
             } 
         );
     }
+
 }
