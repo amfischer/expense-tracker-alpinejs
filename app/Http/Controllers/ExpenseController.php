@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Expense;
 use App\Models\Tag;
+use App\Models\Expense;
+use App\Models\Category;
 use App\Rules\AlphaSpace;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ExpenseController extends Controller
 {
@@ -49,18 +50,32 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
-        ray($request->all());
-        
         $validated = $request->validate([
             'payee' => ['required', new AlphaSpace],
-            'amount' => 'required|decimal:2',
-            'fees' => 'nullable|decimal:2',
-            'currency' => 'required',
+            'amount' => 'required|decimal:0,2',
+            'fees' => 'nullable|decimal:0,2',
+            'currency' => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
             'transaction_date' => 'required|date',
-            'category' => 'required',
+            'category_id' => 'required|numeric',
             'tags' => 'array',
             'notes' => 'nullable',
         ]);
+
+        // dd($validated, gettype($validated['amount']));
+
+        $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
+
+        $tags = $validated['tags'];
+
+        unset($validated['tags']);
+
+        $expense = $request->user()->expenses()->create($validated);
+
+        foreach ($tags as $tagId) {
+            $expense->tags()->attach($tagId);            
+        }
+
+        $request->session()->flash('message', 'Expense successfully created.');
 
         return back();
     }

@@ -52,7 +52,7 @@
         <div class="space-y-6 md:w-1/2 md:pl-5 md:flex md:flex-col md:justify-between">        
             <div>
                 <x-input-label for="category" :value="__('Category')" />
-                <x-forms.select-menu id="category" name="category" class="mt-1 block w-full" :options="$categories" required />
+                <x-forms.select-menu id="category" name="category_id" class="mt-1 block w-full" :options="$categories" required />
                 <x-input-error class="mt-2" :messages="$errors->get('category')" />
             </div>
 
@@ -74,12 +74,6 @@
 
                 </div>
             </div>
-
-            {{-- <div>
-                <x-input-label for="tag" :value="__('Tags')" />
-                <x-forms.select-menu id="tags" name="tags[]" class="mt-1 block w-full" :options="$tags" multiple size="5" />
-                <x-input-error class="mt-2" :messages="$errors->get('tags')" />
-            </div> --}}
 
             <div>
                 <x-input-label for="notes" :value="__('Notes')" />

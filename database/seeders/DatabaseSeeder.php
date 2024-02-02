@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
             $randomTags = Arr::random($tags, random_int(0, 3));
 
             Expense::factory()
-                ->hasAttached($randomTags, ['created_at' => now(), 'updated_at' => now()])
+                ->hasAttached($randomTags)
                 ->create([
                     'user_id' => $user->id,
                     'category_id' => Arr::random($categoryIds)

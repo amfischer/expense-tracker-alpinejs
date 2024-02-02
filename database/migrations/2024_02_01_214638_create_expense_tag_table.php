@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('expense_id');
             $table->unsignedBigInteger('tag_id');
-            $table->timestamps();
 
             $table->foreign('expense_id')->references('id')->on('expenses');
             $table->foreign('tag_id')->references('id')->on('tags');

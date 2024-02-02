@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Money\Money;
 use Money\Currency;
-use Illuminate\Database\Eloquent\Model;
+use Money\Parser\DecimalMoneyParser;
 use Money\Formatter\IntlMoneyFormatter;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +25,7 @@ class Expense extends Model
 
     public static $allowedCurrencies = [
         840 => 'USD',
-        604 => 'PEN',
+        // 604 => 'PEN',
     ];
 
     public function user(): BelongsTo
@@ -51,7 +52,10 @@ class Expense extends Model
                 $money = new Money($value, new Currency($attributes['currency']));
                 return $moneyFormatter->format($money);
                 
-            } 
+            },
+            set: function (string $value) {
+                return app(DecimalMoneyParser::class)->parse($value, new Currency('USD'))->getAmount();
+            }
         );
     }
 
