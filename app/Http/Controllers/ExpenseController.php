@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Expense;
+use App\Models\Tag;
+use App\Rules\AlphaSpace;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 
@@ -28,21 +30,38 @@ class ExpenseController extends Controller
     public function create(Request $request): View
     {
         $user = $request->user();
-        $user->load('categories');
+        $user->load(['categories', 'tags']);
 
-        $user->categories = $user->categories->reduce(function (array $carry, Category $category) {
+        $categories = $user->categories->reduce(function (array $carry, Category $category) {
             $carry[$category->id] = $category->name;
+            return $carry;
+        }, []);
+
+        $tags = $user->tags->reduce(function (array $carry, Tag $tag) {
+            $carry[$tag->id] = $tag->name;
             return $carry;
         }, []);
 
         $currencies = Expense::$allowedCurrencies;
 
-        return view('expense.create', compact('user', 'currencies'));
+        return view('expense.create', compact('user', 'categories', 'tags', 'currencies'));
     }
 
     public function store(Request $request)
     {
-        // ray($request->all());
+        ray($request->all());
+        
+        $validated = $request->validate([
+            'payee' => ['required', new AlphaSpace],
+            'amount' => 'required|decimal:2',
+            'fees' => 'nullable|decimal:2',
+            'currency' => 'required',
+            'transaction_date' => 'required|date',
+            'category' => 'required',
+            'tags' => 'array',
+            'notes' => 'nullable',
+        ]);
+
         return back();
     }
 }

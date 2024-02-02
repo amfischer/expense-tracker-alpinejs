@@ -1,3 +1,8 @@
+@php
+    $request = app('Illuminate\Http\Request');
+    // ray($request->old()); 
+@endphp
+
 <section>
     {{-- <header>
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -15,7 +20,7 @@
         <div class="space-y-6 md:w-1/2 md:pr-5 md:flex md:flex-col md:justify-between">
             <div>
                 <x-input-label for="payee" :value="__('Payee')" />
-                <x-text-input id="payee" name="name" type="text" class="mt-1 block w-full" :value="old('payee')" required autofocus />
+                <x-text-input id="payee" name="payee" type="text" class="mt-1 block w-full" :value="old('payee')" required autofocus />
                 <x-input-error class="mt-2" :messages="$errors->get('payee')" />
             </div>
 
@@ -39,27 +44,48 @@
 
             <div>
                 <x-input-label for="date" :value="__('Transaction Date')" />
-                <x-text-input id="date" name="date" type="date" class="mt-1 block w-full" :value="old('date')" required />
-                <x-input-error class="mt-2" :messages="$errors->get('date')" />
+                <x-text-input id="date" name="transaction_date" type="date" class="mt-1 block w-full" :value="old('transaction_date')" required />
+                <x-input-error class="mt-2" :messages="$errors->get('transaction_date')" />
             </div>
         </div>
 
         <div class="space-y-6 md:w-1/2 md:pl-5 md:flex md:flex-col md:justify-between">        
             <div>
                 <x-input-label for="category" :value="__('Category')" />
-                <x-forms.select-menu id="category" name="category" class="mt-1 block w-full" :value="old('category')" :options="$user->categories" required />
+                <x-forms.select-menu id="category" name="category" class="mt-1 block w-full" :options="$categories" required />
                 <x-input-error class="mt-2" :messages="$errors->get('category')" />
             </div>
 
             <div>
-                <x-input-label for="tag" :value="__('Tags')" />
-                <x-forms.select-menu id="tags" name="tags[]" class="mt-1 block w-full" :value="old('tags')" :options="$user->categories" multiple size="5" />
-                <x-input-error class="mt-2" :messages="$errors->get('tags')" />
+                <p class="mb-5 font-medium text-sm text-gray-700 dark:text-gray-300">{{ __("Tags") }}</p>
+
+                <div class="md:flex md:items-center md:flex-wrap md:px-3">
+
+                    @foreach ($tags as $id => $name)
+                        <div class="flex items-center mb-2 md:w-1/2">
+                            <div class="flex h-6 items-center">
+                                <x-forms.checkbox id="{{$name}}" name="tags[]" :value="$id" :checked="in_array($id, old('tags') ?? [])" class="cursor-pointer" />
+                            </div>
+                            <div class="ml-3">
+                                <x-input-label for="{{$name}}" :value="__($name)" class="cursor-pointer" />
+                            </div>
+                        </div>
+                    @endforeach
+
+                </div>
             </div>
+
+            {{-- <div>
+                <x-input-label for="tag" :value="__('Tags')" />
+                <x-forms.select-menu id="tags" name="tags[]" class="mt-1 block w-full" :options="$tags" multiple size="5" />
+                <x-input-error class="mt-2" :messages="$errors->get('tags')" />
+            </div> --}}
 
             <div>
                 <x-input-label for="notes" :value="__('Notes')" />
-                <x-forms.textarea id="notes" name="notes" class="mt-1 block w-full" :value="old('notes')" rows="5" />
+                <x-forms.textarea id="notes" name="notes" class="mt-1 block w-full" rows="5">
+                    {{ old('notes') }}
+                </x-forms.textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('notes')" />
             </div>
         </div>
