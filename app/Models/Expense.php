@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Money\Formatter\DecimalMoneyFormatter;
 
 class Expense extends Model
 {
@@ -45,12 +46,10 @@ class Expense extends Model
 
     protected function amount(): Attribute
     {
-        $moneyFormatter = app(IntlMoneyFormatter::class);
-
         return Attribute::make(
-            get: function (int $value, array $attributes) use ($moneyFormatter) {
-                $money = new Money($value, new Currency($attributes['currency']));
-                return $moneyFormatter->format($money);
+            get: function (int $value, array $attr) {
+                $money = new Money($value, new Currency($attr['currency']));
+                return app(DecimalMoneyFormatter::class)->format($money);
                 
             },
             set: function (string $value) {
@@ -59,14 +58,22 @@ class Expense extends Model
         );
     }
 
+    protected function amountPretty(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attr) {
+                $money = new Money($attr['amount'], new Currency($attr['currency']));
+                return app(IntlMoneyFormatter::class)->format($money);
+            }
+        );
+    }
+
     protected function fees(): Attribute
     {
-        $moneyFormatter = app(IntlMoneyFormatter::class);
-
         return Attribute::make(
-            get: function (int $value, array $attributes) use ($moneyFormatter) {
-                $money = new Money($value, new Currency($attributes['currency']));
-                return $moneyFormatter->format($money);
+            get: function (int $value, array $attr) {
+                $money = new Money($value, new Currency($attr['currency']));
+                return app(DecimalMoneyFormatter::class)->format($money);
                 
             },
             set: function (?string $value) {
@@ -79,9 +86,19 @@ class Expense extends Model
         );
     }
 
+    protected function feesPretty(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attr) {
+                $money = new Money($attr['fees'], new Currency($attr['currency']));
+                return app(IntlMoneyFormatter::class)->format($money);
+            }
+        );
+    }
+
     protected function hasFees(): Attribute
     {
-        return new Attribute(
+        return Attribute::make(
             get: function(mixed $value, array $attr) {
                 return $attr['fees'] > 0;
             }
@@ -90,16 +107,39 @@ class Expense extends Model
 
     protected function total(): Attribute
     {
-        $moneyFormatter = app(IntlMoneyFormatter::class);
-
-        return new Attribute(
-            get: function(mixed $value, array $attr) use ($moneyFormatter) {
+        return Attribute::make(
+            get: function(mixed $value, array $attr) {
                 $amount = Money::USD($attr['amount']);
                 $fees = Money::USD($attr['fees']);
 
                 $total = $amount->add($fees);
 
-                return $moneyFormatter->format($total);
+                return app(IntlMoneyFormatter::class)->format($total);
+            }
+        );
+    }
+
+    protected function tagsPretty(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                $tagsArray = $this->tags->reduce(function (array $carry, Tag $tag) {
+                    $carry[] = $tag->name;
+                    return $carry;
+                }, []);
+                return implode(', ', $tagsArray);
+            }
+        );
+    }
+
+    protected function tagIds(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->tags->reduce(function (array $carry, Tag $tag) {
+                    $carry[] = $tag->id;
+                    return $carry;
+                }, []);
             }
         );
     }

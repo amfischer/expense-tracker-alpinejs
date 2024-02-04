@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Money\Formatter\IntlMoneyFormatter;
 use Illuminate\Contracts\Foundation\Application;
+use Money\Formatter\DecimalMoneyFormatter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(IntlMoneyFormatter::class, function (Application $app) {
             $numberFormatter = new \NumberFormatter('en_US', \NumberFormatter::CURRENCY);
             return new IntlMoneyFormatter($numberFormatter, $app->make(ISOCurrencies::class));
+        });
+
+        $this->app->singleton(DecimalMoneyFormatter::class, function (Application $app) {
+            return new DecimalMoneyFormatter($app->make(ISOCurrencies::class));
         });
 
         $this->app->singleton(DecimalMoneyParser::class, function (Application $app) {

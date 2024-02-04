@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -57,5 +58,29 @@ class User extends Authenticatable implements MustVerifyEmail
     public function tags(): HasMany
     {
         return $this->hasMany(Tag::class);
+    }
+
+    protected function categoriesArray(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->categories->reduce(function (array $carry, Category $category) {
+                    $carry[$category->id] = $category->name;
+                    return $carry;
+                }, []);
+            }
+        );
+    }
+
+    protected function tagsArray(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->tags->reduce(function (array $carry, Tag $tag) {
+                    $carry[$tag->id] = $tag->name;
+                    return $carry;
+                }, []);
+            }
+        );
     }
 }

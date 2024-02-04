@@ -52,7 +52,7 @@
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                                             <span 
                                                 @if ($expense->hasFees) 
-                                                    title="Amount: {{$expense->amount}} &mdash; Fees: {{$expense->fees}}"
+                                                    title="Amount: {{$expense->amountPretty}} &mdash; Fees: {{$expense->feesPretty}}"
                                                     class="underline underline-offset-2 decoration-dotted"
                                                 @endif>
                                                 {{$expense->total}}
@@ -62,7 +62,7 @@
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->notes}}</td>
 
                                         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                            <a href="#" class="text-white hover:text-gray-400">Edit</a>
+                                            <a href="{{ route('expenses.edit', compact('expense')) }}" class="text-white hover:text-gray-400">Edit</a>
                                         </td>
                                     </tr>
                                     @endforeach

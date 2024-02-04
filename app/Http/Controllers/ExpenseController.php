@@ -17,35 +17,18 @@ class ExpenseController extends Controller
         $expenses = $request->user()->expenses;
         $expenses->load(['category', 'tags']);
 
-        foreach ($expenses as $e) {
-            $tags = [];
-            foreach ($e->tags()->get() as $tag) {
-                $tags[] = $tag->name;
-            }
-            $e->tagsPretty = implode(', ', $tags);
-        }
-
         return view('expense.index', compact('expenses'));
     }
 
     public function create(Request $request): View
     {
         $user = $request->user();
-        $user->load(['categories', 'tags']);
 
-        $categories = $user->categories->reduce(function (array $carry, Category $category) {
-            $carry[$category->id] = $category->name;
-            return $carry;
-        }, []);
-
-        $tags = $user->tags->reduce(function (array $carry, Tag $tag) {
-            $carry[$tag->id] = $tag->name;
-            return $carry;
-        }, []);
-
+        $categories = $user->categoriesArray;
+        $tags = $user->tagsArray;
         $currencies = Expense::$allowedCurrencies;
 
-        return view('expense.create', compact('user', 'categories', 'tags', 'currencies'));
+        return view('expense.create', compact('categories', 'tags', 'currencies'));
     }
 
     public function store(Request $request)
@@ -61,8 +44,6 @@ class ExpenseController extends Controller
             'tags' => 'array',
             'notes' => 'nullable',
         ]);
-
-        // dd($validated, gettype($validated['amount']));
 
         // convert to 3 letter string from 3 digit code
         $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
@@ -86,5 +67,16 @@ class ExpenseController extends Controller
         $request->session()->flash('message', 'Expense successfully created.');
 
         return back();
+    }
+
+    public function edit(Expense $expense, Request $request): View
+    {
+        $user = $request->user();
+
+        $categories = $user->categoriesArray;
+        $tags = $user->tagsArray;
+        $currencies = Expense::$allowedCurrencies;
+
+        return view('expense.edit', compact('expense', 'categories', 'tags', 'currencies'));
     }
 }
