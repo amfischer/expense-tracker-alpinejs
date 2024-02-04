@@ -29,9 +29,12 @@ class ExpenseFactory extends Factory
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
             'payee' => $this->faker->randomElement($this->payees),
-            'amount' => $this->faker->numberBetween(100, 100000), // between $1 USD - $1,000 USD
-            'fees' => $this->faker->numberBetween(10, 10000),
+            'amount' => $this->faker->randomFloat(2, 1, 1000), // between $1 USD - $1,000 USD
+            'fees' => $this->faker->randomFloat(2, 1, 10),
             'transaction_date' => $this->faker->dateTimeBetween('-1 year'),
+            'effective_date' => function (array $attr) {
+                return $attr['transaction_date'];
+            },
             'currency' => 'USD',
         ];
     }

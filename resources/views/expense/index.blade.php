@@ -31,7 +31,7 @@
                                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-0">Payee</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Category</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Tags</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Amount</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Total</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Date</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Notes</th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -42,28 +42,30 @@
 
                                 <tbody class="divide-y divide-gray-200">
                                     
-                                        @foreach ($expenses as $expense)
-                                        <tr>
+                                    @foreach ($expenses as $expense)
+                                    <tr>
 
-                                            
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->payee}}</td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->category->name}}</td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->tagsPretty}}</td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->amount}}</td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->transaction_date->format('Y-m-d')}}</td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->notes}}</td>
+                                        
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->payee}}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->category->name}}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->tagsPretty}}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                                            <span 
+                                                @if ($expense->hasFees) 
+                                                    title="Amount: {{$expense->amount}} &mdash; Fees: {{$expense->fees}}"
+                                                    class="underline underline-offset-2 decoration-dotted"
+                                                @endif>
+                                                {{$expense->total}}
+                                            </span>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->effective_date->format('Y-m-d')}}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{$expense->notes}}</td>
 
-                                            <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                                <a href="#" class="text-white hover:text-gray-400">Edit</a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        {{-- <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">Lindsay Walton</td> --}}
-                                        {{-- <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">lindsay.walton@example.com</td> --}}
-                                        {{-- <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">Member</td> --}}
-                                        {{-- <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"> --}}
-                                            {{-- <a href="#" class="text-white hover:text-gray-400">Edit<span class="sr-only">, Lindsay Walton</span></a> --}}
-                                        {{-- </td> --}}
+                                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                                            <a href="#" class="text-white hover:text-gray-400">Edit</a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
                         
                                 </tbody>
 

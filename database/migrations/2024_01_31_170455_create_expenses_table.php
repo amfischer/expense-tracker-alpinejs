@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('payee');
             $table->bigInteger('amount');
             $table->bigInteger('fees');
-            $table->date('transaction_date');
             $table->string('currency', 3);
+            $table->date('transaction_date');
+            $table->date('effective_date');
             $table->string('notes')->nullable();
             $table->timestamps();
 

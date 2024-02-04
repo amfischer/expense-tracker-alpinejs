@@ -47,6 +47,12 @@
                 <x-text-input id="date" name="transaction_date" type="date" class="mt-1 block w-full" :value="old('transaction_date')" required />
                 <x-input-error class="mt-2" :messages="$errors->get('transaction_date')" />
             </div>
+
+            <div>
+                <x-input-label for="date" :value="__('Effective Date')" />
+                <x-text-input id="date" name="effective_date" type="date" class="mt-1 block w-full" :value="old('effective_date')" required />
+                <x-input-error class="mt-2" :messages="$errors->get('effective_date')" />
+            </div>
         </div>
 
         <div class="space-y-6 md:w-1/2 md:pl-5 md:flex md:flex-col md:justify-between">        

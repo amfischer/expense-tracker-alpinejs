@@ -20,7 +20,7 @@ class Expense extends Model
 
     protected $casts = [
         'transaction_date' => 'datetime',
-        'tags' => 'array'
+        'effective_date' => 'datetime',
     ];
 
     public static $allowedCurrencies = [
@@ -55,6 +55,51 @@ class Expense extends Model
             },
             set: function (string $value) {
                 return app(DecimalMoneyParser::class)->parse($value, new Currency('USD'))->getAmount();
+            }
+        );
+    }
+
+    protected function fees(): Attribute
+    {
+        $moneyFormatter = app(IntlMoneyFormatter::class);
+
+        return Attribute::make(
+            get: function (int $value, array $attributes) use ($moneyFormatter) {
+                $money = new Money($value, new Currency($attributes['currency']));
+                return $moneyFormatter->format($money);
+                
+            },
+            set: function (?string $value) {
+                if ($value === null) {
+                    return 0;
+                }
+
+                return app(DecimalMoneyParser::class)->parse($value, new Currency('USD'))->getAmount();
+            }
+        );
+    }
+
+    protected function hasFees(): Attribute
+    {
+        return new Attribute(
+            get: function(mixed $value, array $attr) {
+                return $attr['fees'] > 0;
+            }
+        );
+    }
+
+    protected function total(): Attribute
+    {
+        $moneyFormatter = app(IntlMoneyFormatter::class);
+
+        return new Attribute(
+            get: function(mixed $value, array $attr) use ($moneyFormatter) {
+                $amount = Money::USD($attr['amount']);
+                $fees = Money::USD($attr['fees']);
+
+                $total = $amount->add($fees);
+
+                return $moneyFormatter->format($total);
             }
         );
     }

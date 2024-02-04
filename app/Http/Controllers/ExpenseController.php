@@ -56,6 +56,7 @@ class ExpenseController extends Controller
             'fees' => 'nullable|decimal:0,2',
             'currency' => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
             'transaction_date' => 'required|date',
+            'effective_date' => 'required|date',
             'category_id' => 'required|numeric',
             'tags' => 'array',
             'notes' => 'nullable',
@@ -63,14 +64,21 @@ class ExpenseController extends Controller
 
         // dd($validated, gettype($validated['amount']));
 
+        // convert to 3 letter string from 3 digit code
         $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
 
-        $tags = $validated['tags'];
+        // get tags & separate from Expense payload
+        $tags = [];
+        
+        if (isset($validated['tags'])) {
+            $tags = $validated['tags'];
+            unset($validated['tags']);
+        }
 
-        unset($validated['tags']);
-
+        // create expense
         $expense = $request->user()->expenses()->create($validated);
 
+        // create tag relationships
         foreach ($tags as $tagId) {
             $expense->tags()->attach($tagId);            
         }
