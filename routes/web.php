@@ -21,7 +21,7 @@ Route::get('/', function () {
 });
 
 Route::get('/ini', function () {
-    return phpinfo();
+    echo phpinfo();
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
     Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
     Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
 });
 
 Route::middleware('auth')->group(function () {

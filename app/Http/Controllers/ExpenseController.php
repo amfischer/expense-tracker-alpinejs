@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tag;
 use App\Models\Expense;
-use App\Models\Category;
 use App\Rules\AlphaSpace;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -31,7 +30,7 @@ class ExpenseController extends Controller
         return view('expense.create', compact('categories', 'tags', 'currencies'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'payee' => ['required', new AlphaSpace],
@@ -78,5 +77,41 @@ class ExpenseController extends Controller
         $currencies = Expense::$allowedCurrencies;
 
         return view('expense.edit', compact('expense', 'categories', 'tags', 'currencies'));
+    }
+
+    public function update(Expense $expense, Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'payee' => ['required', new AlphaSpace],
+            'amount' => 'required|decimal:0,2',
+            'fees' => 'nullable|decimal:0,2',
+            'currency' => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
+            'transaction_date' => 'required|date',
+            'effective_date' => 'required|date',
+            'category_id' => 'required|numeric',
+            'tags' => 'array',
+            'notes' => 'nullable',
+        ]);
+
+        // convert to 3 letter string from 3 digit code
+        $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
+
+         // get tags & separate from Expense payload
+         $tagIds = [];
+        
+         if (isset($validated['tags'])) {
+             $tagIds = $validated['tags'];
+             unset($validated['tags']);
+         }
+
+         $expense->update($validated);
+
+         $expense->tags()->detach();
+
+         $expense->tags()->attach($tagIds);
+
+         $request->session()->flash('message', 'Expense successfully updated.');
+
+        return back();
     }
 }

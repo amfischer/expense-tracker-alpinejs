@@ -1,6 +1,7 @@
 <section>
 
-    <form method="post" action="{{ route('expenses.store') }}" class="max-md:space-y-6 md:flex md:flex-wrap">
+    <form method="post" action="{{ route('expenses.update', $expense) }}" class="max-md:space-y-6 md:flex md:flex-wrap">
+        @method('put')
         @csrf
 
         <div class="space-y-6 md:w-1/2 md:pr-5 md:flex md:flex-col md:justify-between">
@@ -77,7 +78,7 @@
         </div>
 
         <div class="flex items-center justify-end gap-4 w-full mt-10">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button>{{ __('Update') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p
@@ -86,7 +87,7 @@
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
                     class="text-sm text-gray-600 dark:text-gray-400"
-                >{{ __('Saved.') }}</p>
+                >{{ __('Updated.') }}</p>
             @endif
         </div>
     </form>
