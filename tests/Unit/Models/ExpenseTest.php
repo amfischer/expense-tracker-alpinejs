@@ -3,8 +3,8 @@
 use App\Models\Expense;
 
 test('amount returns a formatted string with two decimal places', function() {
-    $tenUSD = 10;
-    $expense = Expense::factory()->create(['amount' => $tenUSD, 'currency' => 'USD']);
+    $amount = 10;
+    $expense = Expense::factory()->create(['amount' => $amount, 'currency' => 'USD']);
 
     expect($expense->amount)
         ->toBeString()
