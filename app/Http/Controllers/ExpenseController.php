@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreExpenseRequest;
 use App\Models\Expense;
 use App\Rules\AlphaSpace;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class ExpenseController extends Controller
 {
@@ -30,26 +31,16 @@ class ExpenseController extends Controller
         return view('expense.create', compact('categories', 'tags', 'currencies'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreExpenseRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'payee' => ['required', new AlphaSpace],
-            'amount' => 'required|decimal:0,2',
-            'fees' => 'nullable|decimal:0,2',
-            'currency' => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
-            'transaction_date' => 'required|date',
-            'effective_date' => 'required|date',
-            'category_id' => 'required|numeric',
-            'tags' => 'array',
-            'notes' => 'nullable',
-        ]);
+        $validated = $request->validated();
 
         // convert to 3 letter string from 3 digit code
         $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
 
         // get tags & separate from Expense payload
         $tags = [];
-        
+
         if (isset($validated['tags'])) {
             $tags = $validated['tags'];
             unset($validated['tags']);
@@ -60,7 +51,7 @@ class ExpenseController extends Controller
 
         // create tag relationships
         foreach ($tags as $tagId) {
-            $expense->tags()->attach($tagId);            
+            $expense->tags()->attach($tagId);
         }
 
         $request->session()->flash('message', 'Expense successfully created.');
@@ -82,35 +73,35 @@ class ExpenseController extends Controller
     public function update(Expense $expense, Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'payee' => ['required', new AlphaSpace],
-            'amount' => 'required|decimal:0,2',
-            'fees' => 'nullable|decimal:0,2',
-            'currency' => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
+            'payee'            => ['required', new AlphaSpace],
+            'amount'           => 'required|decimal:0,2',
+            'fees'             => 'nullable|decimal:0,2',
+            'currency'         => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
             'transaction_date' => 'required|date',
-            'effective_date' => 'required|date',
-            'category_id' => 'required|numeric',
-            'tags' => 'array',
-            'notes' => 'nullable',
+            'effective_date'   => 'required|date',
+            'category_id'      => 'required|numeric',
+            'tags'             => 'array',
+            'notes'            => 'nullable',
         ]);
 
         // convert to 3 letter string from 3 digit code
         $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
 
-         // get tags & separate from Expense payload
-         $tagIds = [];
-        
-         if (isset($validated['tags'])) {
-             $tagIds = $validated['tags'];
-             unset($validated['tags']);
-         }
+        // get tags & separate from Expense payload
+        $tagIds = [];
 
-         $expense->update($validated);
+        if (isset($validated['tags'])) {
+            $tagIds = $validated['tags'];
+            unset($validated['tags']);
+        }
 
-         $expense->tags()->detach();
+        $expense->update($validated);
 
-         $expense->tags()->attach($tagIds);
+        $expense->tags()->detach();
 
-         $request->session()->flash('message', 'Expense successfully updated.');
+        $expense->tags()->attach($tagIds);
+
+        $request->session()->flash('message', 'Expense successfully updated.');
 
         return back();
     }
