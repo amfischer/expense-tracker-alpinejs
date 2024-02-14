@@ -3,6 +3,7 @@
 use App\Http\Controllers\ExpenseController;
 use App\Models\Category;
 use App\Models\Expense;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 
 use function Pest\Laravel\post;
@@ -37,21 +38,42 @@ it("will not show another user's expenses", function () {
     ]);
 });
 
-it('will validate the category_id owner on the expense create/edit form', function () {
+test('store/update expense will validate the category_id belongs to authenticated user', function () {
     $category = Category::factory()->create();
 
     login();
 
+    $user = Auth::user();
+
+    expect($user->id)->not->toEqual($category->user->id);
+
     post(action([ExpenseController::class, 'store']), [
-        'payee'            => 'Walmart',
-        'amount'           => '22.22',
-        'fees'             => '0.89',
-        'currency'         => 'USD',
-        'transaction_date' => '2024-01-01',
-        'effective_date'   => '01/10/2024',
-        'category_id'      => $category->id,
-        'tags'             => [],
+        'category_id' => $category->id,
     ])->assertSessionHasErrors([
         'category_id' => 'The selected category id is invalid.',
     ]);
+});
+
+test('store/update expense will validate tags belong to authenticated user', function () {
+    $tags = Tag::factory(3)->create();
+    $tagIds = [];
+
+    login();
+
+    $user = Auth::user();
+
+    foreach ($tags as $tag) {
+        $tagIds[] = $tag->id;
+
+        expect($user->id)->not->toEqual($tag->user->id);
+    }
+
+    post(action([ExpenseController::class, 'store']), [
+        'tags' => $tagIds,
+    ])->assertSessionHasErrors([
+        'tags.0' => 'The selected tags.0 is invalid.',
+        'tags.1' => 'The selected tags.1 is invalid.',
+        'tags.2' => 'The selected tags.2 is invalid.',
+    ]);
+
 });

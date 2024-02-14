@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Enums\Currency;
-use App\Models\Expense;
 use App\Rules\AlphaSpace;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -40,6 +39,7 @@ class StoreExpenseRequest extends FormRequest
                 Rule::exists('categories', 'id')->where(fn (Builder $query) => $query->where('user_id', Auth::user()->id)),
             ],
             'tags'             => 'array',
+            'tags.*'           => Rule::in(Auth::user()->tagIds),
             'notes'            => 'nullable',
         ];
     }

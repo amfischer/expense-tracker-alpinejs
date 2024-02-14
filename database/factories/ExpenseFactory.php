@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Enums\Currency;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class ExpenseFactory extends Factory
         'PedidosYa',
         'Walmart',
         'McDonalds',
-        'Digital Ocean'
+        'Digital Ocean',
     ];
 
     /**
@@ -26,16 +27,16 @@ class ExpenseFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'category_id' => Category::factory(),
-            'payee' => $this->faker->randomElement($this->payees),
-            'amount' => $this->faker->randomFloat(2, 1, 1000), // between $1 USD - $1,000 USD
-            'fees' => $this->faker->randomFloat(2, 1, 10),
+            'user_id'          => User::factory(),
+            'category_id'      => Category::factory(),
+            'payee'            => $this->faker->randomElement($this->payees),
+            'amount'           => $this->faker->randomFloat(2, 1, 1000), // between $1 USD - $1,000 USD
+            'fees'             => $this->faker->randomFloat(2, 1, 10),
             'transaction_date' => $this->faker->dateTimeBetween('-1 year'),
-            'effective_date' => function (array $attr) {
+            'effective_date'   => function (array $attr) {
                 return $attr['transaction_date'];
             },
-            'currency' => 'USD',
+            'currency'         => Currency::USD(),
         ];
     }
 }
