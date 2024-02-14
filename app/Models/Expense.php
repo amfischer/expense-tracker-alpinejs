@@ -24,11 +24,6 @@ class Expense extends Model
         'effective_date' => 'datetime',
     ];
 
-    public static $allowedCurrencies = [
-        840 => 'USD',
-        // 604 => 'PEN',
-    ];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Currency;
 use App\Http\Requests\StoreExpenseRequest;
 use App\Models\Expense;
 use App\Rules\AlphaSpace;
@@ -26,7 +27,7 @@ class ExpenseController extends Controller
 
         $categories = $user->categoriesArray;
         $tags = $user->tagsArray;
-        $currencies = Expense::$allowedCurrencies;
+        $currencies = Currency::options();
 
         return view('expense.create', compact('categories', 'tags', 'currencies'));
     }
@@ -34,9 +35,6 @@ class ExpenseController extends Controller
     public function store(StoreExpenseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-
-        // convert to 3 letter string from 3 digit code
-        $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
 
         // get tags & separate from Expense payload
         $tags = [];
@@ -59,33 +57,18 @@ class ExpenseController extends Controller
         return back();
     }
 
-    public function edit(Expense $expense, Request $request): View
+    public function edit(Expense $expense): View
     {
-        $user = $request->user();
-
-        $categories = $user->categoriesArray;
-        $tags = $user->tagsArray;
-        $currencies = Expense::$allowedCurrencies;
+        $categories = $expense->user->categoriesArray;
+        $tags = $expense->user->tagsArray;
+        $currencies = Currency::options();
 
         return view('expense.edit', compact('expense', 'categories', 'tags', 'currencies'));
     }
 
-    public function update(Expense $expense, Request $request): RedirectResponse
+    public function update(StoreExpenseRequest $request, Expense $expense): RedirectResponse
     {
-        $validated = $request->validate([
-            'payee'            => ['required', new AlphaSpace],
-            'amount'           => 'required|decimal:0,2',
-            'fees'             => 'nullable|decimal:0,2',
-            'currency'         => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
-            'transaction_date' => 'required|date',
-            'effective_date'   => 'required|date',
-            'category_id'      => 'required|numeric',
-            'tags'             => 'array',
-            'notes'            => 'nullable',
-        ]);
-
-        // convert to 3 letter string from 3 digit code
-        $validated['currency'] = Expense::$allowedCurrencies[$validated['currency']];
+        $validated = $request->validated();
 
         // get tags & separate from Expense payload
         $tagIds = [];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Currency;
 use App\Models\Expense;
 use App\Rules\AlphaSpace;
 use Illuminate\Database\Query\Builder;
@@ -30,7 +31,7 @@ class StoreExpenseRequest extends FormRequest
             'payee'            => ['required', new AlphaSpace],
             'amount'           => 'required|decimal:0,2',
             'fees'             => 'nullable|decimal:0,2',
-            'currency'         => ['required', Rule::in(array_keys(Expense::$allowedCurrencies))],
+            'currency'         => ['required', Rule::in(Currency::names())],
             'transaction_date' => 'required|date',
             'effective_date'   => 'required|date',
             'category_id'      => [
