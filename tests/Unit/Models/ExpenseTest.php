@@ -28,7 +28,7 @@ test('amount & fees store values as an integer representing number of cents', fu
     $this->assertDatabaseHas('expenses', ['amount' => $amountInCents, 'fees' => $feesInCents]);
 });
 
-test('amountPretty & feesPretty return a formatted string with a dollar sign and correct comma and decimal placement', function () {
+test('amountPretty & feesPretty return a formatted string with a dollar-sign and correct comma and decimal placement', function () {
     $amount = 1233.89;
     $fees = 29.99;
     $expense = Expense::factory()->create(['amount' => $amount, 'fees' => $fees, 'currency' => 'USD']);

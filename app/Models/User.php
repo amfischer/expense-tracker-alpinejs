@@ -73,6 +73,13 @@ class User extends Authenticatable implements MustVerifyEmail
         );
     }
 
+    protected function categoryIds(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->categories->map(fn (Category $category) => $category->id)->all()
+        );
+    }
+
     protected function tagsArray(): Attribute
     {
         return Attribute::make(
@@ -89,13 +96,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected function tagIds(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return $this->tags->reduce(function (array $carry, Tag $tag) {
-                    $carry[] = $tag->id;
-
-                    return $carry;
-                }, []);
-            }
+            get: fn () => $this->tags->map(fn (Tag $tag) => $tag->id)->all()
         );
     }
 }

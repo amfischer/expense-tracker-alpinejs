@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Enums\Currency;
 use App\Rules\AlphaSpace;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -33,14 +32,18 @@ class StoreExpenseRequest extends FormRequest
             'currency'         => ['required', Rule::in(Currency::names())],
             'transaction_date' => 'required|date',
             'effective_date'   => 'required|date',
-            'category_id'      => [
-                'required',
-                'numeric',
-                Rule::exists('categories', 'id')->where(fn (Builder $query) => $query->where('user_id', Auth::user()->id)),
-            ],
+            'category_id'      => ['required', 'numeric', Rule::in(Auth::user()->categoryIds)],
             'tags'             => 'array',
             'tags.*'           => Rule::in(Auth::user()->tagIds),
             'notes'            => 'nullable',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'category_id.in' => 'Invalid category selection.',
+            'tags.*.in'      => 'Invalid tag selection.',
         ];
     }
 }

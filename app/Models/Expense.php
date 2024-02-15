@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use Money\Money;
-use Money\Currency;
-use Money\Parser\DecimalMoneyParser;
-use Money\Formatter\IntlMoneyFormatter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Money\Currency;
 use Money\Formatter\DecimalMoneyFormatter;
+use Money\Formatter\IntlMoneyFormatter;
+use Money\Money;
+use Money\Parser\DecimalMoneyParser;
 
 class Expense extends Model
 {
@@ -21,7 +21,7 @@ class Expense extends Model
 
     protected $casts = [
         'transaction_date' => 'datetime',
-        'effective_date' => 'datetime',
+        'effective_date'   => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -44,8 +44,9 @@ class Expense extends Model
         return Attribute::make(
             get: function (int $value, array $attr) {
                 $money = new Money($value, new Currency($attr['currency']));
+
                 return app(DecimalMoneyFormatter::class)->format($money);
-                
+
             },
             set: function (string $value) {
                 return app(DecimalMoneyParser::class)->parse($value, new Currency('USD'))->getAmount();
@@ -58,6 +59,7 @@ class Expense extends Model
         return Attribute::make(
             get: function (mixed $value, array $attr) {
                 $money = new Money($attr['amount'], new Currency($attr['currency']));
+
                 return app(IntlMoneyFormatter::class)->format($money);
             }
         );
@@ -68,8 +70,9 @@ class Expense extends Model
         return Attribute::make(
             get: function (int $value, array $attr) {
                 $money = new Money($value, new Currency($attr['currency']));
+
                 return app(DecimalMoneyFormatter::class)->format($money);
-                
+
             },
             set: function (?string $value) {
                 if ($value === null) {
@@ -86,6 +89,7 @@ class Expense extends Model
         return Attribute::make(
             get: function (mixed $value, array $attr) {
                 $money = new Money($attr['fees'], new Currency($attr['currency']));
+
                 return app(IntlMoneyFormatter::class)->format($money);
             }
         );
@@ -94,7 +98,7 @@ class Expense extends Model
     protected function hasFees(): Attribute
     {
         return Attribute::make(
-            get: function(mixed $value, array $attr) {
+            get: function (mixed $value, array $attr) {
                 return $attr['fees'] > 0;
             }
         );
@@ -103,7 +107,7 @@ class Expense extends Model
     protected function total(): Attribute
     {
         return Attribute::make(
-            get: function(mixed $value, array $attr) {
+            get: function (mixed $value, array $attr) {
                 $amount = Money::USD($attr['amount']);
                 $fees = Money::USD($attr['fees']);
 
@@ -117,11 +121,13 @@ class Expense extends Model
     protected function tagsPretty(): Attribute
     {
         return Attribute::make(
-            get: function() {
+            get: function () {
                 $tagsArray = $this->tags->reduce(function (array $carry, Tag $tag) {
                     $carry[] = $tag->name;
+
                     return $carry;
                 }, []);
+
                 return implode(', ', $tagsArray);
             }
         );
@@ -130,13 +136,7 @@ class Expense extends Model
     protected function tagIds(): Attribute
     {
         return Attribute::make(
-            get: function() {
-                return $this->tags->reduce(function (array $carry, Tag $tag) {
-                    $carry[] = $tag->id;
-                    return $carry;
-                }, []);
-            }
+            get: fn () => $this->tags->map(fn (Tag $tag) => $tag->id)->all()
         );
     }
-
 }
