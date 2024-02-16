@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Requests\StoreExpenseRequest;
+use App\Http\Requests\ExpenseRequest;
 use App\Models\Category;
 use App\Models\Expense;
 use App\Models\Tag;
@@ -19,9 +19,17 @@ beforeEach(function () {
     $this->requestData = Expense::factory()->make(['user_id' => $this->user->id])->toArray();
 });
 
+// AUTHORIZATION TESTS
+
+// it('should deny the request if user does not own the expense', function() {
+
+// });
+
+// VALIDATION TESTS
+
 it('will validate the selected category belongs to the authenticated user', function () {
 
-    $request = new StoreExpenseRequest();
+    $request = new ExpenseRequest();
 
     // using category that belongs to different user
     $validator = Validator::make($this->requestData, $request->rules(), $request->messages());
@@ -43,7 +51,7 @@ it('will validate the selected category belongs to the authenticated user', func
 
 it('will validate the selected tags belong to the authenticated user', function () {
 
-    $request = new StoreExpenseRequest();
+    $request = new ExpenseRequest();
 
     $this->requestData['category_id'] = $this->category->id;
 

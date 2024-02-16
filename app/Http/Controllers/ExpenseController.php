@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Currency;
-use App\Http\Requests\StoreExpenseRequest;
+use App\Http\Requests\ExpenseRequest;
 use App\Models\Expense;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class ExpenseController extends Controller
@@ -30,7 +31,7 @@ class ExpenseController extends Controller
         return view('expense.create', compact('categories', 'tags', 'currencies'));
     }
 
-    public function store(StoreExpenseRequest $request): RedirectResponse
+    public function store(ExpenseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -57,6 +58,8 @@ class ExpenseController extends Controller
 
     public function edit(Expense $expense): View
     {
+        Gate::authorize('view', $expense);
+
         $categories = $expense->user->categoriesArray;
         $tags = $expense->user->tagsArray;
         $currencies = Currency::options();
@@ -64,8 +67,10 @@ class ExpenseController extends Controller
         return view('expense.edit', compact('expense', 'categories', 'tags', 'currencies'));
     }
 
-    public function update(StoreExpenseRequest $request, Expense $expense): RedirectResponse
+    public function update(ExpenseRequest $request, Expense $expense): RedirectResponse
     {
+        Gate::authorize('update', $expense);
+
         $validated = $request->validated();
 
         // get tags & separate from Expense payload
