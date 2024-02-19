@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
@@ -33,6 +34,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
     Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
     Route::delete('/expenses/{expense}', [ExpenseController::class, 'delete'])->name('expenses.delete');
+
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    // Route::get('/categories/create', [CategoryController::class, 'index'])->name('categories.create');
+    // Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    // Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::delete('/categories/{category}', [CategoryController::class, 'delete'])->name('categories.delete');
 });
 
 Route::middleware('auth')->group(function () {
