@@ -15,9 +15,9 @@
                     {{-- <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">A list of all expenses in your account including amount, date, and payee.</p> --}}
                   {{-- </div> --}}
                   <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <x-button-link :href="route('expenses.create')">
+                        <x-buttons.link :href="route('expenses.create')">
                             {{ __('Add expense') }}
-                        </x-button-link>
+                        </x-buttons.link>
                   </div>
                 </div>
 

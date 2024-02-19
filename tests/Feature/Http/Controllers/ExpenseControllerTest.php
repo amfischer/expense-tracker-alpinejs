@@ -12,7 +12,7 @@ it('can show expenses', function () {
 
     login($expense->user);
 
-    $this->get('/expenses')
+    $this->get(route('expenses.index'))
         ->assertSee($expense->payee)
         ->assertSee($expense->total);
 });
@@ -24,7 +24,7 @@ it("will not show another user's expenses", function () {
 
     $user = Auth::user();
 
-    $this->get('/expenses')
+    $this->get(route('expenses.index'))
         ->assertOk()
         ->assertDontSee($expenseFromDifferentUser->payee)
         ->assertDontSee($expenseFromDifferentUser->total);

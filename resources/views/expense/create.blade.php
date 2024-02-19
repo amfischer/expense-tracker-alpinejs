@@ -18,9 +18,9 @@
 
             <div class="sm:flex sm:items-center sm:justify-end">
                 <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                      <x-button-link :href="route('expenses.index')">
+                      <x-buttons.link :href="route('expenses.index')">
                           {{ __('Back') }}
-                      </x-button-link>
+                      </x-buttons.link>
                 </div>
             </div>
 
