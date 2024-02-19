@@ -2,17 +2,16 @@
 
 namespace App\Providers;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Parser\DecimalMoneyParser;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
-use Money\Formatter\IntlMoneyFormatter;
-use Illuminate\Contracts\Foundation\Application;
+use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
+use Money\Formatter\IntlMoneyFormatter;
+use Money\Parser\DecimalMoneyParser;
 
 class AppServiceProvider extends ServiceProvider
 {
-
     public $singletons = [
         ISOCurrencies::class => ISOCurrencies::class,
     ];
@@ -26,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(IntlMoneyFormatter::class, function (Application $app) {
             $numberFormatter = new \NumberFormatter('en_US', \NumberFormatter::CURRENCY);
+
             return new IntlMoneyFormatter($numberFormatter, $app->make(ISOCurrencies::class));
         });
 

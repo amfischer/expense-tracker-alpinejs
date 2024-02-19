@@ -26,7 +26,7 @@ class CategoryFactory extends Factory
         'Transportation',
         'Travel',
     ];
-    
+
     /**
      * Define the model's default state.
      *
@@ -36,7 +36,7 @@ class CategoryFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->name
+            'name'    => $this->faker->name,
         ];
     }
 }
