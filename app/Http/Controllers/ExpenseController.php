@@ -91,4 +91,18 @@ class ExpenseController extends Controller
 
         return back();
     }
+
+    public function delete(Expense $expense): RedirectResponse
+    {
+        Gate::authorize('delete', $expense);
+
+        // remove tags & delete
+        $expense->tags()->detach();
+
+        $expense->delete();
+
+        session()->flash('message', 'Expense successfully updated.');
+
+        return redirect()->route('expenses.index');
+    }
 }
