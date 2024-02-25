@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Category;
-use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
@@ -19,7 +18,7 @@ it('can show categories', function () {
 });
 
 it("will not show another user's categories", function () {
-    $expenseRestricted = Expense::factory()->create();
+    $categoryRestricted = Category::factory()->create();
 
     login();
 
@@ -27,10 +26,33 @@ it("will not show another user's categories", function () {
 
     $this->get(route('expenses.index'))
         ->assertOk()
-        ->assertDontSee($expenseRestricted->payee)
-        ->assertDontSee($expenseRestricted->total);
+        ->assertDontSee($categoryRestricted->payee)
+        ->assertDontSee($categoryRestricted->total);
 
     $this->assertDatabaseMissing('expenses', [
         'user_id' => $user->id,
     ]);
 });
+
+test('users can create new categories', function () {
+
+    $formData = Category::factory()->make(['user_id' => $this->user->id])->toArray();
+
+    $this->post(route('categories.store'), $formData);
+
+    $this->assertDatabaseHas('categories', $formData);
+});
+
+test('users can update existing categories', function () {
+
+    $category = Category::factory()->create(['user_id' => $this->user->id]);
+
+    $this->assertModelExists($category);
+
+    $formData = Category::factory()->make(['user_id' => $this->user->id])->toArray();
+
+    $this->put(route('categories.update', $category), $formData);
+
+    $this->assertDatabaseHas('categories', $formData);
+});
+
