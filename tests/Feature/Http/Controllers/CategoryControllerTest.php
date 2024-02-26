@@ -56,3 +56,42 @@ test('users can update existing categories', function () {
     $this->assertDatabaseHas('categories', $formData);
 });
 
+test('users can delete existing categories', function () {
+    $category = Category::factory()->create(['user_id' => $this->user->id]);
+
+    $this->assertModelExists($category);
+
+    $this->delete(route('categories.delete', $category));
+
+    $this->assertModelMissing($category);
+    $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+
+});
+
+/**
+ * AUTHORIZATION TESTS
+ */
+
+it('will return a 403 if user attempts to update categories from other accounts', function () {
+    $categoryRestricted = Category::factory()->create();
+
+    $formData = $categoryRestricted->toArray();
+
+    $this->put(route('categories.update', $categoryRestricted), $formData)
+        ->assertForbidden();
+});
+
+
+it('will return a 403 if user attempts to delete categories from other accounts', function () {
+    $categoryRestricted = Category::factory()->create();
+
+    $formData = $categoryRestricted->toArray();
+
+    $this->delete(route('categories.delete', $categoryRestricted), $formData)
+        ->assertForbidden();
+});
+
+
+
+
+
