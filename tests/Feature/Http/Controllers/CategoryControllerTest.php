@@ -71,7 +71,6 @@ test('users can delete existing categories', function () {
 /**
  * AUTHORIZATION TESTS
  */
-
 it('will return a 403 if user attempts to update categories from other accounts', function () {
     $categoryRestricted = Category::factory()->create();
 
@@ -81,7 +80,6 @@ it('will return a 403 if user attempts to update categories from other accounts'
         ->assertForbidden();
 });
 
-
 it('will return a 403 if user attempts to delete categories from other accounts', function () {
     $categoryRestricted = Category::factory()->create();
 
@@ -90,8 +88,3 @@ it('will return a 403 if user attempts to delete categories from other accounts'
     $this->delete(route('categories.delete', $categoryRestricted), $formData)
         ->assertForbidden();
 });
-
-
-
-
-
