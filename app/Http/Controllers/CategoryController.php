@@ -33,9 +33,7 @@ class CategoryController extends Controller
 
         $request->user()->categories()->create($validated);
 
-        $request->session()->flash('message', 'Category successfully created.');
-
-        return back();
+        return back()->with('message', 'Category successfully created.');
     }
 
     /**
@@ -53,9 +51,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        $request->session()->flash('message', 'Category successfully updated.');
-
-        return back();
+        return back()->with('message', 'Category successfully updated.');
     }
 
     /**
@@ -65,10 +61,15 @@ class CategoryController extends Controller
     {
         Gate::authorize('delete', $category);
 
+        $category->loadCount('expenses');
+
+        if ($category->expenses_count !== 0) {
+            $count = $category->expenses_count;
+
+            return back()->with('message', 'category is linked to '.$count.' expenses. Remove these relationships before deleting.');
+        }
         $category->delete();
 
-        session()->flash('message', 'Category successfully updated.');
-
-        return redirect()->route('expenses.index');
+        return redirect()->route('expenses.index')->with('message', 'Category successfully deleted.');
     }
 }

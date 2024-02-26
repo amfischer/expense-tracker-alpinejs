@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
@@ -68,23 +69,29 @@ test('users can delete existing categories', function () {
 
 });
 
+it('will block category deletion if the category is linked to any expenses', function () {
+    $category = Category::factory()->create(['user_id' => $this->user->id]);
+    $expenses = Expense::factory(2)->create(['user_id' => $this->user->id, 'category_id' => $category->id]);
+
+    $this->delete(route('categories.delete', $category))
+        ->assertRedirect()
+        ->assertSessionHas('message', 'category is linked to '.count($expenses).' expenses. Remove these relationships before deleting.');
+
+});
+
 /**
  * AUTHORIZATION TESTS
  */
 it('will return a 403 if user attempts to update categories from other accounts', function () {
     $categoryRestricted = Category::factory()->create();
 
-    $formData = $categoryRestricted->toArray();
-
-    $this->put(route('categories.update', $categoryRestricted), $formData)
+    $this->put(route('categories.update', $categoryRestricted), [])
         ->assertForbidden();
 });
 
 it('will return a 403 if user attempts to delete categories from other accounts', function () {
     $categoryRestricted = Category::factory()->create();
 
-    $formData = $categoryRestricted->toArray();
-
-    $this->delete(route('categories.delete', $categoryRestricted), $formData)
+    $this->delete(route('categories.delete', $categoryRestricted))
         ->assertForbidden();
 });

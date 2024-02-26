@@ -66,8 +66,6 @@ class TagController extends Controller
 
         $tag->delete();
 
-        session()->flash('message', 'Tag successfully updated.');
-
-        return redirect()->route('expenses.index');
+        return redirect()->route('expenses.index')->with('message', 'Tag successfully deleted.');
     }
 }
