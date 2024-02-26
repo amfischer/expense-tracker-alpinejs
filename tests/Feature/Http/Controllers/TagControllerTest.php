@@ -82,9 +82,7 @@ it('will block tag deletion if the tag is linked to any expenses', function () {
 it('will return a 403 if user attempts to update tags from other accounts', function () {
     $tagRestricted = Tag::factory()->create();
 
-    $formData = $tagRestricted->toArray();
-
-    $this->put(route('tags.update', $tagRestricted), $formData)
+    $this->put(route('tags.update', $tagRestricted), [])
         ->assertForbidden();
 });
 
